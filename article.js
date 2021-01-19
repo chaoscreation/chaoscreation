@@ -36,7 +36,12 @@ function cryptoRandomValue(min, max) {
   return (bytes[0] % range) + min;
 }
 
+// cryptoRandomValue works fine when calling it a few times but is too slow to
+// render an entire canvas. FastCoinFlip keeps an internal buffer of randomly
+// generated values (to amortize the call to crypto.getRandomValues). The code
+// also only consumes one bit instead of an entire byte per call to flip().
 class FastCoinFlip {
+  // Size (in bytes) of internal buffer of random values.
   constructor(bufSize) {
     this.buf = new Uint8Array(bufSize)
     this.ptr = 0;
@@ -85,7 +90,7 @@ function genWhiteNoise() {
   scaleCanvas(fig1, ctx, 200, 200)
 
   ctx.clearRect(0, 0, ctx.width, ctx.height);
-  let rng = new FastCoinFlip(1000);
+  let rng = new FastCoinFlip(1024);
 
   for (let i=0; i<ctx.height; i++) {
     for (let j=0; j<ctx.width; j++) {
