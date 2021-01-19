@@ -123,8 +123,11 @@ h2 {
 canvas {
   width: 200px;
   height: 200px;
-  border: 1px solid black;
+  border: 1px solid #457b9d;
+}
 
+img {
+  max-width: 100%;
 }
 
 .timeline {

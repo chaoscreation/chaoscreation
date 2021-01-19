@@ -7,7 +7,8 @@
 </head>
 <body class="font0">
   <div class="fullwidth title">
-    <h1>Everything I know about random number generation <img id="dice" src="dice/1-0.png"></h1>
+    <h1>Everything I know about random number generation <img id="dice" src="dice/1-0.png" onClick="rollDice(); return false;"></h1>
+    <!-- the dice roll uses a cryptographically secure random number generator! -->
     <div class="subtitle">A page dedicated to random, pseudo-random, cryptographic, secure, and other number generators.</div>
   </div>
 
@@ -21,33 +22,31 @@
   <p>
     Computers use Random Number Generators (RNGs) to create sequences of seemingly
     random numbers. For example, figure 1 is different everytime you load this
-    page. It looks like <i>white noise</i>, because it is white noise: a black
-    and white image with equal likelihood for any given pixel to be of either color.
+    page. Each pixel has equal likelihood of being black or white. The result is
+    called white noise image.
   </p>
 
   <p>
-    However, not all RNGs are equal. For example,
-    Linear Congruential Generators (LCG), a type of pseudo-random number generator (PRNG),
-    yields poor quality results (figure 2); often resulting in visible structure.
+    Not all RNGs are equal. For example, Linear Congruential Generators (LCG), a
+    type of pseudo-random number generator (PRNG), yields poor quality results
+    (figure 2); often resulting in visible structure.
   </p>
 
-  <p>Random number generation is a topic I find fascinating for several reasons:
-    it impacts many areas of computer science (cryptography, simulations and experiments,
-    generative art, testing, etc.). In addition, there's a history of failures we can learn from.
-    Finally, real world RNGs are more complicated than you might think at first glance.
+  <p>
+    Random number generation is a fascinating topic. It impacts many areas of
+    computer science (cryptography, simulations and experiments, generative art,
+    testing, etc.). In addition, there's a history of failures we can learn from.
+    Finally, real world RNGs are more complicated than you might think at first
+    glance.
   </p>
 
   <p>
     The audiance for this page are software engineers or the technically inclined
     who are interested to learn more about how RNGs work <i>at a high level</i>.
     The depth and breadth of the information is comparable to what you would find
-    on Wikipedia, except all the information has been gathered in a single page,
-    hopefully making it easy to read.
+    on Wikipedia. Having all the information gathered in a single page,
+    hopefully makes the content easier to read.
   </p>
-
-  <p>This page is hosted on GitHub, feel free to open a <a href="https://github.com/alokmenghrajani/alokmenghrajani.github.com/pulls">Pull Request</a>
-    to make corrections or add any missing information. You may also use the <a href="https://github.com/alokmenghrajani/alokmenghrajani.github.com/discussions">discussions</a>
-    feature to ask any question or discuss anything.</p>
 
   <p>If you are interested to work at Square, my team (as well as many others are hiring). Visit
     <a href="https://squareup.com/careers">https://squareup.com/careers</a>
@@ -62,10 +61,6 @@
       <canvas id="fig2"></canvas>
       <div>Figure 2: LCG <a href="" onClick="genLCG(); return false"><img class="refresh" src="refresh.svg"></a>.</div>
     </div>
-    <!-- <div>
-      <canvas id="fig3"></canvas>
-      <div>Figure 3: Square logo <a href="" onClick="genSquareLogo(); return false"><img class="refresh" src="refresh.svg"></a>.</div>
-    </div> -->
   </div>
 
   <h2 class="count">Contributors</h2>
@@ -74,17 +69,129 @@
     a draft version, and/or providing constructive feedback along the way.</p>
 
   <p>
-    If you would like to contribute new content to this page or suggest a fix,
-    you may open a pull request. Please indicate if you would like
-    your name included below.
-    <!-- TODO: pull request URL -->
+    This page is hosted on GitHub, feel free to open an <a href="https://github.com/alokmenghrajani/alokmenghrajani.github.com/issues">Issue</a>
+    or a <a href="https://github.com/alokmenghrajani/alokmenghrajani.github.com/pulls">Pull Request</a>
+    to report any mistakes or suggest corrections or additional material. Please indicate
+    if you would like your name included below.
+    You may also use the <a href="https://github.com/alokmenghrajani/alokmenghrajani.github.com/discussions">Discussions</a>
+    feature to ask any question or start a discussion.
   </p>
 
   <p>In random order (obviously) <a href="" onClick="updateContributors(); return false"><img class="refresh" src="refresh.svg"></a>:</p>
-    <ul id="contributors"></ul>
+    <ul id="contributors">
+      <li>Oscar</li>
+      <li>Alex</li>
+      <li>Michael</li>
+    </ul>
 
-  <h2 class="count">Need for random number generators</h2>
-  <p>Incomplete list, explaining why random number generators are useful and the
+  <h2 class="count">Overview</h2>
+  <p>
+    A RNG is a process which generates a sequence of numbers. A good RNG will
+    generate each possible sequence with equal probability (no bias) and
+    in an unpredictable way.
+  </p>
+  <p>
+    Before looking at how RNGs work, let's go over a short list of applications
+    where a RNG comes into play:
+    <ul>
+      <li>
+        <b>Cryptography</b>: cryptographic protocols require randomly generating keys,
+        nonces, and/or salts. This data must be unguessable, requiring a RNG with the
+        highest level of unpredictability. RNG failures can lead to ciphertext getting
+        decrypted, cryptocurrency loss, or other unfortunate outcomes.
+        Random number generators designed for cryptographic applications are
+        sometimes referred to as True Random Number Generators (TRNG),
+        cryptographically secure pseudorandom number generator (CSPRNG, sometimes
+        abbreviated as CPRNG and CRNG).
+      </li>
+      <li>
+        <b>Casino/lottery games</b>: an attacker who can predict future cards can turn the winning
+        odds in their favor. The scheme is easy to monetize, making it attractive for attackers.
+        In addition, an insider attacker might subvert how the random number generation
+        happens or how the stream of random data gets used in order to create a
+        subtle weakness.
+      </li>
+      <li>
+        <b>Simulations and science experiments</b>: reproducibility
+        is often a desirable property. Using a deterministic process to generate
+        random numbers implies you can share the seed and have other people
+        verify your results. You however need the highest level of unpredictability,
+        or you risk affecting the results and making incorrect conclusions.
+      </li>
+      <li><b>Random selection of people</b>: TODO: describe humans think about fairness/luck.
+        in some cases you need the abilty to certify the rng was fair, which can be hard
+        to do when taking supply chain security into consideration.
+      </li>
+      <li>
+        <b>Lots of other applications</b>: video games,
+        image processing, generative art, testing/fuzzing, etc. In most other
+        applications, the speed and reproducibility might be more important than
+        the fact that the sequence needs to be unguessable.
+    </ul>
+  </p>
+
+  <p>
+    Security engineers have various tools at this disposal:
+    one or more hardware random number generators (HWRNG), external unpredictable
+    events, pseudo random number generators (PRNG), hash functions, etc. Each
+    of these components involve various tradeoffs. For instance, HWRNG are
+    typically slow and might have a bias. Exteral unpredictable events might
+    not be observed until after the computer has booted. PRNGs need to be seeded.
+    Operating system engineers combine these various components into one or more
+    simple APIs to generate random numbers.
+  </p>
+
+  <h2 class="count">You can never be sure</h2>
+  <img src="https://assets.amuniversal.com/321a39e06d6401301d80001dd8b71c47">
+
+  <p>
+    One issue with RNG design is that you can never be sure if a generator
+    is correct or not. The best we can do is run statistical tests and rule
+    out generators which appear to be incorrect.
+  </p>
+  <p>
+    Common statistical tests include NIST's NIST SP 800-22, https://csrc.nist.gov/Projects/Random-Bit-Generation/Documentation-and-Software
+  </p>
+  https://www.unf.edu/~cwinton/html/cop4300/s09/class.notes/c2-StatisticalTesting%20RNGsx.pdf
+  Example tests:
+  "Count the number of times a
+member of the sequence falls into a given interval. The number
+should be approximately the same for intervals of the same length
+if the sequence is uniform. "
+
+Count the number of times a k-tuple of
+members of the sequence falls into a given k-dimensional cell. If
+this test is passed, the sequence is said to be k-distributed.
+
+Etc.
+
+<p>Marsaglia’s 1995 Diehard collection</p>
+<p>TestU01</p>
+<p>generators in the PCG family do very well in statistical tests. https://www.pcg-random.org/pdf/hmc-cs-2014-0905.pdf
+</p>
+<p>BigCrush</p>
+<p>Diceware</p>
+ent utility from Fourmilab
+NIST Statistical Test Suite (Special Publication 800-22 Revision 1a)
+DieHarder: A Random Number Test Suite
+Practically Random (PractRand)
+BSI: Application Notes and Interpretation of the Scheme (AIS) 31 – Functionality Classes and Evaluation Methodology for Physical Random Number Generators, Version 1 (25.09.2001), English translation.
+https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Zertifizierung/Interpretationen/AIS_31_pdf.html
+https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Zertifizierung/Interpretationen/AIS_20_AIS_31_Evaluation_of_random_number_generators_e.pdf?__blob=publicationFile
+https://www.esat.kuleuven.be/cosic/publications/article-2896.pdf
+https://www.systutorials.com/docs/linux/man/1-rngtest/
+
+
+https://www.johndcook.com/blog/defensible-randomization/
+http://www-users.math.umn.edu/~garrett/students/reu/pRNGs.pdf
+https://www.schneier.com/wp-content/uploads/2017/10/paper-prngs.pdf
+
+<p>https://www.pcg-random.org/index.html</p>
+<p>Fortuna RNG</p>
+
+https://en.wikipedia.org/wiki/Middle-square_method
+https://en.wikipedia.org/wiki/Weyl_sequence
+https://en.wikipedia.org/wiki/List_of_random_number_generators
 
 
   <h2 class="count">Overview of random number generator</h2>
@@ -490,6 +597,29 @@ https://web.archive.org/web/20080706071139/http://www.cigital.com/papers/downloa
 https://www.2uo.de/myths-about-urandom/
 
 RNG, PRNG, TRNG, CSPRNG
+
+Practical Random Number Generation in Software
+https://www.acsac.org/2003/papers/79.pdf
+
+https://cryptotronix.com/2014/08/28/tpm-rng/
+
+/dev/urandom vs /dev/random
+
+https://www.infolipo.org/rencontres/rc2003/mnoll/noll2.html
+Quality of random number generators significantly affects results of Monte Carlo simulations for organic and biological systems
+
+Random Number Generator Recommendations for Applications
+https://peteroupc.github.io/random.html
+
+https://www.random.org/randomness/
+
+https://www.quora.com/What-are-the-practical-applications-of-random-number-generators
+Digital display: when rotating or scaling a digital image, the discretization will lead to highly visible display artifacts unless it is counteracted. This is often done using randomization within the pixel area. Someone posted an example on Quora recently using a picture of a brick wall; I can't find the link.
+Computer opponents: rather than do the same thing every time, they can choose randomly among plausible alternatives.
+MIT has an entire class (6.856)
+
+https://cryptotronix.com/2014/08/28/tpm-rng/
+
 
     -->
   </div>
