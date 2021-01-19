@@ -1,1 +1,497 @@
-<html><body><h1>it works!</h1></body></html>
+<html>
+<head>
+  <link rel="stylesheet" href="article.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="article.js"></script>
+  <title>Everything I know about random number generation.</title>
+</head>
+<body class="font0">
+  <div class="fullwidth title">
+    <h1>Everything I know about random number generation <img id="dice" src="dice/1-0.png"></h1>
+    <div class="subtitle">A page dedicated to random, pseudo-random, cryptographic, secure, and other number generators.</div>
+  </div>
+
+  <div class="container">
+    <p align="right">Last updated: Jan 2021</p>
+  <h2>Table of content</h2>
+  <ol id="toc">
+  </ol>
+
+  <h2 class="count">Introduction</h2>
+  <p>
+    Computers use Random Number Generators (RNGs) to create sequences of seemingly
+    random numbers. For example, figure 1 is different everytime you load this
+    page. It looks like <i>white noise</i>, because it is white noise: a black
+    and white image with equal likelihood for any given pixel to be of either color.
+  </p>
+
+  <p>
+    However, not all RNGs are equal. For example,
+    Linear Congruential Generators (LCG), a type of pseudo-random number generator (PRNG),
+    yields poor quality results (figure 2); often resulting in visible structure.
+  </p>
+
+  <p>Random number generation is a topic I find fascinating for several reasons:
+    it impacts many areas of computer science (cryptography, simulations and experiments,
+    generative art, testing, etc.). In addition, there's a history of failures we can learn from.
+    Finally, real world RNGs are more complicated than you might think at first glance.
+  </p>
+
+  <p>
+    The audiance for this page are software engineers or the technically inclined
+    who are interested to learn more about how RNGs work <i>at a high level</i>.
+    The depth and breadth of the information is comparable to what you would find
+    on Wikipedia, except all the information has been gathered in a single page,
+    hopefully making it easy to read.
+  </p>
+
+  <p>This page is hosted on GitHub, feel free to open a <a href="https://github.com/alokmenghrajani/alokmenghrajani.github.com/pulls">Pull Request</a>
+    to make corrections or add any missing information. You may also use the <a href="https://github.com/alokmenghrajani/alokmenghrajani.github.com/discussions">discussions</a>
+    feature to ask any question or discuss anything.</p>
+
+  <p>If you are interested to work at Square, my team (as well as many others are hiring). Visit
+    <a href="https://squareup.com/careers">https://squareup.com/careers</a>
+    to browse job openings. No, this page is not an elaborate advertisement!</p>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr">
+    <div>
+      <canvas id="fig1"></canvas>
+      <div>Figure 1: white noise <a href="" onClick="genWhiteNoise(); return false"><img class="refresh" src="refresh.svg"></a>.</div>
+    </div>
+    <div>
+      <canvas id="fig2"></canvas>
+      <div>Figure 2: LCG <a href="" onClick="genLCG(); return false"><img class="refresh" src="refresh.svg"></a>.</div>
+    </div>
+    <!-- <div>
+      <canvas id="fig3"></canvas>
+      <div>Figure 3: Square logo <a href="" onClick="genSquareLogo(); return false"><img class="refresh" src="refresh.svg"></a>.</div>
+    </div> -->
+  </div>
+
+  <h2 class="count">Contributors</h2>
+  <p>This page was authored by <a href="https://quaxio.com/">Alok Menghrajani</a>.
+    The following people helped by either directly contributing content, proof reading
+    a draft version, and/or providing constructive feedback along the way.</p>
+
+  <p>
+    If you would like to contribute new content to this page or suggest a fix,
+    you may open a pull request. Please indicate if you would like
+    your name included below.
+    <!-- TODO: pull request URL -->
+  </p>
+
+  <p>In random order (obviously) <a href="" onClick="updateContributors(); return false"><img class="refresh" src="refresh.svg"></a>:</p>
+    <ul id="contributors"></ul>
+
+  <h2 class="count">Need for random number generators</h2>
+  <p>Incomplete list, explaining why random number generators are useful and the
+
+
+  <h2 class="count">Overview of random number generator</h2>
+  <p>In order to better understand real world random number generators, it's
+    worth thinking about the ideal scenario.</p>
+
+  <h2 class="count">Puzzle 1: biased coin</h2>
+  <p><i>The solution to this puzzle is towards the end of this page.</i></p>
+
+  <h2 class="count">Puzzle 2: RSA key generation</h2>
+  <p><i>The solution to this puzzle is towards the end of this page.</i></p>
+  <p>Generating a RSA key requires creating two primes. These primes need to
+    each be large and secret. Given a RNG, how can you create two such
+    primes?
+  </p>
+
+  <h2 class="count">Puzzle 3: sqrt(2) bias</h2>
+  <p><i>The solution to this puzzle is towards the end of this page.</i></p>
+  <p>Given a fair coin, build a RNG with prob(1) = 1/sqrt(2).</p>
+
+  <h2 class="count">Puzzle 4: range</h2>
+  <p><i>The solution to this puzzle is towards the end of this page.</i></p>
+  <p>Given an infinite steam of randomly generated bytes (0-255), return values in the range 0-10.</p>
+
+  <h2 class="count">Puzzle 5: float</h2>
+  <p><i>The solution to this puzzle is towards the end of this page.</i></p>
+  <p>Given an infinite steam of randomly generated bytes (0-255), return a float in the range 0-1.</p>
+  <p>What about the range 0-10?</p>
+
+
+  <h2 class="count">Hardware Random Number Generators</h2>
+  <p>Note: I'm a software engineer. Take my information on hardware random
+    number generators (HWRNG) with a grain of salt.</p>
+  <p>There are two types of HWRNG: those using randomness coming from the
+    environment (e.g. measure the minuscule difference in temperature on two different
+    parts of a board) and hardware using physical properties which we believe
+    to be random, to the best of our physics knowledge.</p>
+  <p>
+    The first type of HWRNG is cheap and easy to find. TODO examples.
+  </p>
+  <p>
+    The second type is typically more expensive.
+  </p>
+  <p>While not a RNG, a good tool in the hardware designer's toolbox are
+    physically uncloneable functions (PUFs). These are chips which have randomness
+    injected in them at manufacturing time. In general, hardware engineers dislike
+    pieces of hardware which are random, since testing can become challening.</p>
+
+
+<!-- XKCD + Dilbert -->
+
+  <h2 class="count">Failures</h2>
+  <p>
+    The purpose of this section is to help people learn from past mistakes. All
+    these failures are attribuable to poor random number generation. In some
+    cases, the lack of entropy could have been mitigated with a simple diode
+    costing less than $1. In other cases, the root cause is software-related
+    bugs, which are harder to prevent. Security engineering as a field is likely
+    to remain fascinating for many years to come.
+  </p>
+  <p>
+    In chronological order:
+  </p>
+
+  <div class="timeline">
+    <div>
+      <span>1940s</span>
+      <p>
+        Enigma was a mechanical cipher device used by various countries in the
+        early 20th century. Enigma operators were supposed to pick three letters
+        at random for their initial rotor positions. Humans tend to be poor at
+        making random choices. Combined with other flaws, Allied cryptographers
+        were able to completely break Enigma's cipher and decrypt important
+        military secrets.
+      </p>
+      <hr/>
+      <p>
+        Around the same period, the U.S. Army's Signals Intelligence Service was
+        able to solve a one-time pad system used by the German Foreign Office
+        for its high-level traffic, codenamed GEE. GEE was insecure because the
+        machine used to generate the pads produced predictable output.
+      </p>
+      <hr/>
+      <p>
+        Also around the same period, there are reports of other one-time
+        pad failures. In some cases this was due to human errors. In other
+        cases, the failure stemmed from poor processes to generate the one-time
+        pad.
+      </p>
+      <p>
+        <i>To be fair, generating random numbers at that time was much harder than
+        today. The only reason I'm listing these events here is to remind people
+        that random number generators influenced the outcome of wars.</i>
+      </p>
+    </div>
+
+    <div>
+      <span>1980</span>
+      <p>
+        Physical balls at Pennsylvania’s lottery were weighted, which resulted
+        in higher likelyhood for certain numbers. In general, defending against
+        insider attackers is very hard. In this case, the unusual betting
+        patterns alerted authorities to the crime. The chief conspirators were
+        sent to prison, and most of the fraudulently acquired winnings were
+        never paid out.
+      </p>
+      <p><a href="https://www.pennlive.com/life/2020/04/convicted-bookie-helped-uncover-triple-six-fix-pa-lottery-scandal-40-years-ago.html">https://www.pennlive.com/life/2020/04/convicted-bookie-helped-uncover-triple-six-fix-pa-lottery-scandal-40-years-ago.html</a></p>
+    </div>
+
+    <div>
+      <span>1995</span>
+      <p>
+        Netscape used PID, PPID, and time of day to seed SSL connections. The
+        code was closed source, but Ian Goldberg and David Wagner reverse
+        engineered the binary. While the cipher was weak (could be cracked in
+        ~30 CPU hours), the weak random number generation made it possible to
+        break the ciphertext in seconds.
+      </p>
+      <p><a href="https://people.eecs.berkeley.edu/~daw/papers/ddj-netscape.html">https://people.eecs.berkeley.edu/~daw/papers/ddj-netscape.html</a></p>
+    </div>
+
+    <div>
+      <span>1999</span>
+      <p>
+        Brad Arkin, Frank Hill, Scott Marks, Matt Schmid, and Thomas John Walls
+        find multiple flaws in an online poker site. The flaws include
+        implementation bugs in the card shuffling algorithm as well as weak
+        random number generation.
+        https://www.developer.com/tech/article.php/616221/How-We-Learned-to-Cheat-at-Online-Poker-A-Study-in-Software-Security.htm
+        https://web.archive.org/web/20040225194802/https://www.cigital.com/papers/download/developer_gambling.php
+      </p>
+    </div>
+
+    <div>
+      <span>2006</span>
+      <p>
+        Debian accidentally broke the OpenSSL random number generator while
+        trying to silence a Valgrind warning. It is common for Debian maintainers
+        to include custom patches. In this instance, the maintainer even asked
+        for help on the OpenSSL mailing list and was given incorrect advice by
+        two experts.
+      </p>
+      <p>
+        <a href="https://lists.debian.org/debian-security-announce/2008/msg00152.html">CVE-2008-0166</a>, <a href="https://jblevins.org/log/ssh-vulnkey">https://jblevins.org/log/ssh-vulnkey</a>, and <a href="https://research.swtch.com/openssl">https://research.swtch.com/openssl</a>
+      </p>
+    </div>
+
+    <div>
+      <span>2007</span>
+      <p>
+        Dan Shumow and Niels Ferguson present that EC-DRBG, an algorithm
+        standardized by NIST in 2006, could have potentially been backdoored
+        using a technique published in 1997. After the Snowden revelations, NIST
+        withdrew the algorithm in 2014.
+      </p>
+      <p>
+        More info: <a href="http://rump2007.cr.yp.to/15-shumow.pdf">http://rump2007.cr.yp.to/15-shumow.pdf</a>,
+        <a href="https://www.wired.com/2007/11/securitymatters-1115/">https://www.wired.com/2007/11/securitymatters-1115/</a>, and
+        <a href="https://www.schneier.com/blog/archives/2007/11/the_strange_sto.html">https://www.schneier.com/blog/archives/2007/11/the_strange_sto.html</a>
+      </p>
+      <hr/>
+      <p>
+        In the same year, a team of Isreali researchers present flaws in Windows’ random number generator. <a href="https://eprint.iacr.org/2007/419.pdf">https://eprint.iacr.org/2007/419.pdf</a>.
+      </p>
+    </div>
+
+    <div>
+      <span>2010</span>
+      <p>
+        Playstation3 software suffered from a nonce reuse, which resulted in a
+        private key recovery. In addition to using a strong source of randomness,
+        Sony should have implemented deterministic ECDSA, an idea that had been
+        around for ECDSA since 1997 (and formalized in 2013 as RFC-6979).
+      </p>
+    </div>
+
+    <div>
+      <span>2012</span>
+      <p>
+        Researchers from UC San Diego and UMich collected a large number of TLS
+        certificates and were able to factor ~1% of keys due to weaknesses in
+        the key generation. <a href="https://factorable.net/weakkeys12.extended.pdf">https://factorable.net/weakkeys12.extended.pdf</a>.
+      </p>
+      <p>
+        At roughly the same time, Lenstra’s lab at EPFL performed a similar
+        study, but focusing on GPG keys. They recovered ~0.2% of the keys.
+        <a href="https://eprint.iacr.org/2012/064.pdf">https://eprint.iacr.org/2012/064.pdf</a>
+      </p>
+
+      <hr/>
+
+      <p>
+        The same year, Pokémon players abuse the RNG to get rare items.
+        <a href="https://bulbapedia.bulbagarden.net/wiki/Pseudorandom_number_generation_in_Pok%C3%A9mon">https://bulbapedia.bulbagarden.net/wiki/Pseudorandom_number_generation_in_Pokémon</a>
+      </p>
+    </div>
+
+    <div>
+      <span>2013</span>
+      <p>
+        Android Zygote pre-initialized the OpenSSL RNG and then shared this
+        pre-initialized state between all apps (all apps are forked at runtime
+        from Zygote). OpenSSL had a defense in depth for that, which was to mix
+        in the PID. Android reuses the PID. As a result, it's possible to get
+        the same app launched twice on the same device, with the same PID. In
+        such cases, the app would see the exact same output stream from the PRNG.
+      </p>
+      <p>
+        If the app then performed ECDSA signatures, it would end up using the
+        same k for its ECDSA signature, which leaks the private key in a way
+        similar to Sony's 2010 issue. The fix was to ditch OpenSSL's PRNG
+        implementation and replace it with reading from /dev/urandom. A system
+        daemon also mixes in (at boot and every hour after that) a few kB of
+        data read from /dev/hwrng (if present) into Linux PRNG.
+      </p>
+      <p>
+        As a nuance, the actual PRNG dependency graph on modern Android is
+        roughly: Java SecureRandom implementation that delegates to OpenSSL PRNG
+        implementation that delegates to the Linux PRNG (by reading directly
+        from /dev/urandom and returning that as the result to its caller). The
+        reason for going with using the OpenSSL PRNG abstraction is that this
+        way native platform code (such as the native TLS/SSL stack) that needs
+        PRNG can (and does) use the OpenSSL PRNG.
+      </p>
+      <p>
+        This Android Zygote bug resulted in the theft of at least 55 Bitcoins.
+        <a href="https://blog.lxgr.net/posts/2013/08/15/android-securerandom-not-even-nonce/">https://blog.lxgr.net/posts/2013/08/15/android-securerandom-not-even-nonce/</a>
+      </p>
+
+      <hr/>
+
+      <p>
+        NetBSD: due to a misplaced parenthesis, if insufficient GOOD bits were
+        available to satisfy a request, the keying/rekeying code requested
+        either 32 or 64 ANY bits, rather than the balance of bits required to
+        key the stream generator. <a href="https://ftp.netbsd.org/pub/NetBSD/security/advisories/NetBSD-SA2013-003.txt.asc">https://ftp.netbsd.org/pub/NetBSD/security/advisories/NetBSD-SA2013-003.txt.asc</a>.
+      </p>
+
+      <hr/>
+
+      <p>
+        The same year, Taiwan's National "Citizen Digital Certificate" smartcard
+        database has 184 efficiently factorable keys.
+      </p>
+
+      <hr/>
+
+      <p>
+        "the srandomdev function in Libc in Apple Mac OS X before 10.9, when
+        the kernel random-number generator is unavailable, produces predictable
+        values instead of the intended random values. This makes it easier for
+        context-dependent attackers to defeat cryptographic protection
+        mechanisms by leveraging knowledge of these values, related to a
+        compiler-optimization issue."
+      </p>
+    </div>
+
+    <div>
+      <span>2015</span>
+      <p>
+        Chrysler vehicle passwords are based on the time the car is turned on
+        for the first time. A number of cars are remotely hackable. <a href="https://spectrum.ieee.org/cars-that-think/transportation/systems/jeep-hacking-101">https://spectrum.ieee.org/cars-that-think/transportation/systems/jeep-hacking-101</a>
+      </p>
+    </div>
+
+    <div>
+      <span>2017</span>
+      <p>
+        Slot machines with weak PRNGs were being exploited for financial gains.
+        <a href="https://www.schneier.com/blog/archives/2017/02/predicting_a_sl.html">https://www.schneier.com/blog/archives/2017/02/predicting_a_sl.html</a>
+      </p>
+      <hr/>
+      <p>
+        Raspberry Pi has had a hardware RNG since at least 2013. For some
+        reason, the driver to read from the hardware RNG was disabled in 2017,
+        resulting in predictable ssh host keys:
+        <a href="https://www.raspberrypi.org/forums/viewtopic.php?f=66&t=126892">https://www.raspberrypi.org/forums/viewtopic.php?f=66&t=126892</a>
+      </p>
+      <hr/>
+      <p>
+        PHP’s pseudo-random number generator (mt_rand) has a bias on 64-bit
+        machines. <a href="https://bugs.php.net/bug.php?id=75170">https://bugs.php.net/bug.php?id=75170</a>.
+        This wasn't the first issue with PHP's mt_rand. In 2008, a range isssue
+        was partially fixed (<a href="https://bugs.php.net/bug.php?id=46587">https://bugs.php.net/bug.php?id=46587</a>)
+        with the proper fix nine years later (<a href="https://bugs.php.net/bug.php?id=75514">https://bugs.php.net/bug.php?id=75514</a>).
+        There was also issues around returning 31-bit instead of 32-bit values,
+        and incorrectly scaling the desired range (<a href="https://bugs.php.net/bug.php?id=45184">https://bugs.php.net/bug.php?id=45184</a>).
+      </p>
+      <p>
+        Correctness issues in mt_rand shouldn't be a concern, since mt_rand shouldn't
+        be used for any cryptographic purpose. Web developers were however prone
+        to using mt_rand for securing session cookies, which could then be
+        attacked.
+      </p>
+      <hr/>
+      <p>
+        The same year, random number generators at various lotteries were rigged
+        by an insider. Did I mention defending against insiders is hard?
+        https://en.wikipedia.org/wiki/Hot_Lotto_fraud_scandal
+      </p>
+    </div>
+
+    <div>
+      <span>2021</span>
+      <p>
+        RDRAND on AMD Ryzen 9 5900X is perhaps flaky. https://github.com/systemd/systemd/issues/18184.
+        Previous generations of Ryzen seem to also have had similar issues.
+        https://linuxreviews.org/RDRAND_stops_returning_random_values_on_older_AMD_CPUs_after_suspend
+        https://arstechnica.com/gadgets/2019/10/how-a-months-old-amd-microcode-bug-destroyed-my-weekend/
+      </p>
+    </div>
+  </div>
+
+
+  <h2 class="count">Solution to puzzle 2: RSA key generation</h2>
+  <p class="spoiler">Spoiler!</p>
+  <p>
+    A naive method would be to randomly generate a number N, and then
+    find the Nth prime. This wouldn't work well, because enumerating all
+    primes is slow (O(N) operations and O(N) memory).
+  </p>
+
+  <p>
+    The solution for generating large primes is to randomly generate a large
+    number and then run some statistical tests to check whether it is prime.
+    An RSA key is therefore only probabilistically secure, thankfully we get
+    to pick what level of certainty we want.
+  </p>
+  https://github.com/openssl/openssl/blob/master/crypto/bn/bn_prime.c
+
+  <p>
+    Safe prime: https://en.wikipedia.org/wiki/Safe_and_Sophie_Germain_primes
+    https://en.wikipedia.org/wiki/Primality_certificate
+  </p>
+
+  <h2 class="count">Solution to puzzle 5: float</h2>
+  <p class="spoiler">Spoiler!</p>
+  <p>
+
+  The conventional method for generating a pseudorandom floating-point value is to generate a pseudorandom integer and divide by a constant (using floating-point arithmetic). The problems with this approach are (1) the possible outcomes are a small subset of the representable floating-point values (about $7%$ for a typical implementation) and (2) subsequent transformation of these values may not yield the expected distributions (for example, applying a log transformation to numbers from a uniform distribution does not yield an exponential distribution as it would in real arithmetic). We present a new algorithm with the following properties: (1) it can produce every representable floating-point value in a given range, and (2) it is efficient in both time and use of pseudorandom bits.
+  </p>
+  https://webcache.googleusercontent.com/search?q=cache:OM7YHIUrLIwJ:https://allendowney.com/research/rand/downey07randfloat.pdf+&cd=1&hl=en&ct=clnk&gl=us
+
+  <h2 class="count">Closing thoughts</h2>
+  <p>
+    It seems some PRNGs generate similar streams for similar inputs (i.e. the
+    stram for seed=N is similar to the stream for seed=N+1). If that is indeed
+    true, we should probably always use a cryptographic hash function as
+    part of the seeding process (i.e. use seed=hash(N) instead of seed=N).
+  </p>
+  <p align="right"><i>Alok Menghrajani</i></p>
+
+  <!--    <li>Random number types and their applications</li>
+      <li>The ideal random number generator</li>
+      <li>Linux: Entropy modeling</li>
+      <li>Some randomly generated numbers</li>
+
+
+Perfect RNG:
+- a tree. Each process gets it's own "pool". Can't affect other processes.
+
+
+
+Irrational number => RNG? Nope, 0.1010010001000010000001... is irrational. But
+it wouldn't be a good RNG.
+
+
+Quality of random number generators significantly affects results of Monte Carlo simulations for organic and biological systems
+
+https://en.wikipedia.org/wiki/Spectral_test
+
+https://www.pcg-random.org/posts/visualizing-the-heart-of-some-prngs.html
+
+https://scholarworks.wmich.edu/cgi/viewcontent.cgi?article=2397&context=dissertations
+
+http://www.reedbeta.com/blog/quick-and-easy-gpu-random-numbers-in-d3d11/
+
+"(Incidentally, I was confused for a long time about the distinction between PRNGs and hash functions—they seem to do the same thing, i.e. create an “unpredictable” but deterministic output by jumbling up input bits. It wasn’t until I started playing around with GPU PRNGs that I realized the difference: PRNGs are designed for going deep, and hashes for going wide.)"
+
+I wonder about the relative speed of bit-operations versus floating-point on dx11-GPUs - do you have any profiled results on this? Also, I guess it would be interesting to compare it to the currently most commonly used shader random-function, that uses a different category of functions:
+
+//http://glsl.heroku.com/e#60...
+float rand( vec2 n )
+{
+return fract(sin(dot(n.xy, vec2(12.9898, 78.233)))* 43758.5453);
+}
+
+Geeky notes: The sinusoid based thing seems to stem from a stripped down Rey generator..never seen the article it's based on, but the documentation of TestU01 gives an overview and the source has an implementation. Other pure float RNGs that come to mind are various flavors of Weyl generators (again basics can be found with TestU01) and permutation polynomials (https://github.com/ashima/w.... My gut is that none of these are worth investigating. Oh there are others, like you can make a float LCG, but in singles...seems tough. I'll stop now because I'm being more noise than signal. :)
+
+WRT: MurmurHash2 - Bad me, I was only thinking about the pre-hash part since it is separable. Dropping the final mix might be okay. Moving to a fragment shader, where you need to mix two or three values it should be a win.
+https://github.com/ashima/webgl-noise
+
+http://typeocaml.com/2015/11/22/visualise_random/
+
+https://blog.trailofbits.com/2020/06/11/ecdsa-handle-with-care/
+
+YubiKey RNG issue: https://www.yubico.com/support/security-advisories/ysa-2019-02/#technical-details
+
+http://davidbau.com/archives/2010/01/30/random_seeds_coded_hints_and_quintillions.html
+
+https://web.archive.org/web/20080706071139/http://www.cigital.com/papers/download/developer_gambling.php
+
+https://www.2uo.de/myths-about-urandom/
+
+RNG, PRNG, TRNG, CSPRNG
+
+    -->
+  </div>
+</body>
+</html>
