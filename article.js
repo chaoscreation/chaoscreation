@@ -6,6 +6,7 @@ $(document).ready(() => {
   genLCG()
   updateContributors()
   genSpoiler()
+  genArt1()
 })
 
 function rollDice() {
@@ -107,7 +108,7 @@ function genLCG() {
 
   // LCG with deliberately poor parameters. These parameters were used by
   // Visual Basic 6 and earlier. Some seeds, such as 15461763 or 343 are really
-  // bad.
+  // bad. 1671052 is even worse;
   let M = 16777216;
   let A = 1140671485;
   let C = 12820163;
@@ -162,4 +163,30 @@ function genSpoiler() {
       e.appendChild(s);
     }
   });
+}
+
+function genArt1() {
+  let a = art1.innerText.split("\n");
+  let rng = new FastCoinFlip(1024);
+  let i = 0;
+  let step = () => {
+    if (a[a.length-1] == "\n") {
+      a[a.length-1] = "";
+    }
+    if (rng.flip()) {
+      a[a.length-1] += '╱';
+    } else {
+      a[a.length-1] += '╲';
+    }
+    i++;
+    if (i == 40) {
+      i = 0;
+      a.push("\n");
+      if (a.length == 26) {
+        a.shift();
+      }
+    }
+    art1.innerHTML = a.join("\n");
+  }
+  window.setInterval(step, 20);
 }

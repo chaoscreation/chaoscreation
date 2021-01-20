@@ -50,10 +50,14 @@
 body {
   width: 80ch;
   margin: 2em auto 10em auto;
-  font-size: large;
   background-color: #eee;
   color: #222;
-  line-height: 1.5;
+  font-size: 21px;
+  line-height: 32px;
+}
+
+p {
+  margin-top: 32px;
 }
 
 .container {
@@ -221,4 +225,70 @@ hr:after {
     100% {
       color: #000;
     }
+}
+
+.htimeline {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+	align-items: flex-end;
+  height: 20ch;
+}
+
+.htimeline hr {
+  position: absolute;
+  content: "";
+  border-top: 2px solid #457b9d;
+  margin: 0;
+  height: 0;
+  padding: 0 0 2em 0;
+  width: 70ch;
+}
+
+.htimeline hr:after {
+  content: "";
+}
+
+.htimeline > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: 4em;
+}
+
+.htimeline .sq {
+  position: absolute;
+  margin-top: -2px;
+  width: 12px;
+  height: 12px;
+  background-color: #457b9d;
+}
+
+.htimeline .desc {
+  position: absolute;
+  transform-origin: center left;
+  transform: translateX(10em) translateY(-1.5em) rotateZ(-45deg);
+  width: 40ch;
+  font-size: small;
+}
+
+.htimeline .label {
+  padding-top: 3em;
+  font-size: small;
+}
+
+@font-face {
+  font-family: 'c64';
+  src: url(C64_Pro_Mono-STYLE.woff) format('woff');
+}
+
+#art1 {
+  font-family: monospace;
+  line-height: 1.2;
+  white-space: pre;
+  color: #7bb4e0;
+  background-color: #0067a0;
+  width: 40ch;
+  padding: 2px 1px;
 }

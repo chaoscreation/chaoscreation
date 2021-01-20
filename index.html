@@ -20,10 +20,10 @@
 
   <h2 class="count">Introduction</h2>
   <p>
-    Computers use Random Number Generators (RNGs) to create sequences of seemingly
-    random numbers. For example, figure 1 is different everytime you load this
-    page. Each pixel has equal likelihood of being black or white. The result is
-    called white noise image.
+    Computers use Random Number Generators (RNGs) to create sequences of
+    seemingly random numbers. For example, figure 1 is different everytime you
+    load this page. Each pixel has equal likelihood of being black or white. The
+    result is called white noise image.
   </p>
 
   <p>
@@ -35,17 +35,17 @@
   <p>
     Random number generation is a fascinating topic. It impacts many areas of
     computer science (cryptography, simulations and experiments, generative art,
-    testing, etc.). In addition, there's a history of failures we can learn from.
-    Finally, real world RNGs are more complicated than you might think at first
-    glance.
+    testing, etc.). In addition, there's a history of failures we can learn
+    from. Finally, real world RNGs are more complicated than you might think at
+    first glance.
   </p>
 
   <p>
-    The audiance for this page are software engineers or the technically inclined
-    who are interested to learn more about how RNGs work <i>at a high level</i>.
-    The depth and breadth of the information is comparable to what you would find
-    on Wikipedia. Having all the information gathered in a single page,
-    hopefully makes the content easier to read.
+    The audiance for this page are software engineers or the technically
+    inclined who are interested to learn more about how RNGs work <i>at a high
+    level</i>. The depth and breadth of the information is comparable to what
+    you would find on Wikipedia. Having all the information gathered in a single
+    page, hopefully makes the content easier to read.
   </p>
 
   <p>If you are interested to work at Square, my team (as well as many others are hiring). Visit
@@ -64,9 +64,12 @@
   </div>
 
   <h2 class="count">Contributors</h2>
-  <p>This page was authored by <a href="https://quaxio.com/">Alok Menghrajani</a>.
-    The following people helped by either directly contributing content, proof reading
-    a draft version, and/or providing constructive feedback along the way.</p>
+  <p>
+    This page was authored by <a href="https://quaxio.com/">Alok
+    Menghrajani</a>. The following people helped by either directly contributing
+    content, proof reading a draft version, and/or providing constructive
+    feedback along the way.
+  </p>
 
   <p>
     This page is hosted on GitHub, feel free to open an <a href="https://github.com/alokmenghrajani/alokmenghrajani.github.com/issues">Issue</a>
@@ -95,21 +98,22 @@
     where a RNG comes into play:
     <ul>
       <li>
-        <b>Cryptography</b>: cryptographic protocols require randomly generating keys,
-        nonces, and/or salts. This data must be unguessable, requiring a RNG with the
-        highest level of unpredictability. RNG failures can lead to ciphertext getting
-        decrypted, cryptocurrency loss, or other unfortunate outcomes.
-        Random number generators designed for cryptographic applications are
-        sometimes referred to as True Random Number Generators (TRNG),
-        cryptographically secure pseudorandom number generator (CSPRNG, sometimes
-        abbreviated as CPRNG and CRNG).
+        <b>Cryptography</b>: cryptographic protocols require randomly generating
+        keys, nonces, and/or salts. This data must be unguessable, requiring a
+        RNG with the highest level of unpredictability. RNG failures can lead to
+        ciphertext getting decrypted, cryptocurrency loss, or other unfortunate
+        outcomes. Random number generators designed for cryptographic
+        applications are sometimes referred to as True Random Number Generators
+        (TRNG), cryptographically secure pseudorandom number generator (CSPRNG,
+        sometimes abbreviated as CPRNG and CRNG).
       </li>
       <li>
-        <b>Casino/lottery games</b>: an attacker who can predict future cards can turn the winning
-        odds in their favor. The scheme is easy to monetize, making it attractive for attackers.
-        In addition, an insider attacker might subvert how the random number generation
-        happens or how the stream of random data gets used in order to create a
-        subtle weakness.
+        <b>Casino/lottery games</b>: an attacker who can predict future cards
+        can turn the winning odds in their favor. The scheme is easy to
+        monetize, making it attractive for attackers. In addition, an insider
+        attacker might subvert how the random number generation happens or how
+        the stream of random data gets used in order to create a subtle
+        weakness.
       </li>
       <li>
         <b>Simulations and science experiments</b>: reproducibility
@@ -118,15 +122,29 @@
         verify your results. You however need the highest level of unpredictability,
         or you risk affecting the results and making incorrect conclusions.
       </li>
-      <li><b>Random selection of people</b>: TODO: describe humans think about fairness/luck.
-        in some cases you need the abilty to certify the rng was fair, which can be hard
-        to do when taking supply chain security into consideration.
+      <li><b>Random selection affecting people</b>: humans tend to think irrationally
+        about random events. Positive events are considered in terms of luck
+        or destiny. Negative events are considered unfair. This can lead to
+        situations where the random generation process needs to be verifiable.
+        In general, it is very hard to fully verify computer-related processes,
+        since the entire supply chain security needs to be taken into consideration.
+      </li>
+      <li>
+        <b>Data structures</b>: hash tables often need to mitigate the risk of
+        an attacker degrading the performance of the data structure by carefully
+        crafted keys. A cryptographic hash function would work but would add
+        significant overhead. The typical solution is to use a weaker but faster
+        hashing algorithm and seed it with a randomly generated seed. Another
+        related application is randomization of address space and stack
+        canaries. The goal in those cases is to make it harder for an attacker
+        to exploit buffer or stack overflows.
       </li>
       <li>
         <b>Lots of other applications</b>: video games,
         image processing, generative art, testing/fuzzing, etc. In most other
         applications, the speed and reproducibility might be more important than
         the fact that the sequence needs to be unguessable.
+      </li>
     </ul>
   </p>
 
@@ -139,6 +157,63 @@
     not be observed until after the computer has booted. PRNGs need to be seeded.
     Operating system engineers combine these various components into one or more
     simple APIs to generate random numbers.
+  </p>
+
+  <p>The amount of entropy is conservatively estimated, but not counted</p>
+
+  <h2 class="count">Hardware Random Number Generator</h2>
+  <p>
+    Hardware random number generators derive randomness by measuring a physical
+    process. For example a diode can be used to measure electrical noise.
+    Other common techniques include measuring the difference between multiple
+    oscillators. A camera pointed at lava lamps can also be used.
+  </p>
+  <p>
+    HWRNGs can be categorized based on whether the measurement is a classical
+    physical property or a quantum random property, with the later devices being
+    significantly more expensive.
+  </p>
+  <p>
+    On a modern computer, there are typically two HWRNGs: the secure enclave/TPM
+    and the processor each provide the ability to generate random numbers. In
+    addition, it is possible to time jiter. Finally, exteral events (such as
+    timing between keystroke, mouse movements, or internet packet arrival) can
+    be used to construct a RNG with strong properties.
+
+    * https://en.wikipedia.org/wiki/Noise_generator
+    * https://en.wikipedia.org/wiki/Lavarand
+    * https://www.atlasobscura.com/places/encryption-lava-lamps
+    * https://www.chronox.de/jent/doc/CPU-Jitter-NPTRNG.html
+  </p>
+  <p>
+    System designers can also leverage physical uncloneable functions (PUF)s.
+    "PUFs depend on the uniqueness of their physical microstructure. This
+    microstructure depends on random physical factors introduced during
+    manufacturing. These factors are unpredictable and uncontrollable, which
+    makes it virtually impossible to duplicate or clone the structure.
+
+    * https://en.wikipedia.org/wiki/Physical_unclonable_function
+  </p>
+
+  <h2 class="count">Software Random Number Generator</h2>
+  <p>
+    Pseudo Random Number Generators (PRNG) are software based, deterministic,
+    algorithms. A PRNG is typically seeded with the output of a HWRNG. The
+    combination of HWRNG + PRNG typically enables secure random number
+    generation AND speed.
+  </p>
+  <p>
+    The way RNGs are combined involves entropy pools. It is common to preserve
+    the entropy state between system reboots in a random seed file.
+  </p>
+  <p>
+    Cryptographic protocols can be designed to take entropy from different
+    sources (e.g. the client can supply some entropy, which gets mixed with
+    entropy from the server, to then derive a key). You must be careful how the
+    entropy is mixed -- the safest option being the use of a cryptographic hash
+    function. This is how TLS 1.2 works.
+
+    * https://tls.ulfheim.net/
   </p>
 
   <h2 class="count">You can never be sure</h2>
@@ -164,6 +239,52 @@ members of the sequence falls into a given k-dimensional cell. If
 this test is passed, the sequence is said to be k-distributed.
 
 Etc.
+<p>
+  List of some of the most popular PRNGs.
+<div class="htimeline">
+  <hr/>
+  <div>
+    <div class="desc">Middle-square method</div>
+    <div class="sq"></div>
+    <div class="label">1946</div>
+  </div>
+  <div>
+    <div class="desc">Linear congruential generator</div>
+    <div class="sq"></div>
+    <div class="label">1958</div>
+  </div>
+  <div>
+    <div class="desc">Linear feedback shift register</div>
+    <div class="sq"></div>
+    <div class="label">1965</div>
+  </div>
+  <div>
+    <div class="desc">Mersenne Twister</div>
+    <div class="sq"></div>
+    <div class="label">1998</div>
+  </div>
+  <div>
+    <div class="desc">Yarrow</div>
+    <div class="sq"></div>
+    <div class="label">1999</div>
+  </div>
+  <div>
+    <div class="desc">Fortuna</div>
+    <div class="sq"></div>
+    <div class="label">2003</div>
+  </div>
+  <div>
+    <div class="desc">Xorshift</div>
+    <div class="sq"></div>
+    <div class="label">2003</div>
+  </div>
+  <div>
+    <div class="desc">Xoroshiro128+</div>
+    <div class="sq"></div>
+    <div class="label">2018</div>
+  </div>
+</div>
+</p>
 
 <p>Marsaglia’s 1995 Diehard collection</p>
 <p>TestU01</p>
@@ -192,6 +313,7 @@ https://www.schneier.com/wp-content/uploads/2017/10/paper-prngs.pdf
 https://en.wikipedia.org/wiki/Middle-square_method
 https://en.wikipedia.org/wiki/Weyl_sequence
 https://en.wikipedia.org/wiki/List_of_random_number_generators
+
 
 
   <h2 class="count">Overview of random number generator</h2>
@@ -239,7 +361,6 @@ https://en.wikipedia.org/wiki/List_of_random_number_generators
     physically uncloneable functions (PUFs). These are chips which have randomness
     injected in them at manufacturing time. In general, hardware engineers dislike
     pieces of hardware which are random, since testing can become challening.</p>
-
 
 <!-- XKCD + Dilbert -->
 
@@ -535,6 +656,66 @@ https://en.wikipedia.org/wiki/List_of_random_number_generators
   </p>
   https://webcache.googleusercontent.com/search?q=cache:OM7YHIUrLIwJ:https://allendowney.com/research/rand/downey07randfloat.pdf+&cd=1&hl=en&ct=clnk&gl=us
 
+  <h2 class="count">Tid bits</h2>
+  <ol>
+    <li>There's no such thing as a random number. A number can be randomly
+    generated. Once generated, a number is just a number.</li>
+    <li>There's heated debate on /dev/random vs /dev/urandom. Some systems have
+      replaced /dev/urandom with a symlink. Lots of opiniated people.
+      https://www.2uo.de/myths-about-urandom/
+    </li>
+    <li>The following command will fail to output different numbers:
+<pre>zsh -c 'echo `echo $RANDOM`; echo `echo $RANDOM`'</pre>
+        The similar command with bash works as expected (keep in mind that <code>$RANDOM</code> isn't
+        a secure RNG):
+<pre>bash -c 'echo `echo $RANDOM`; echo `echo $RANDOM`'</pre>
+        The difference between <code>bash</code> and <code>zsh</code> include
+        the way each shell handles sharing the seed with subshells.
+        See https://nullprogram.com/blog/2018/12/25/ and https://linux.die.net/man/1/zshparam.
+    </li>
+  </ol>
+  <p>
+
+
+
+  <h2 class="count">Some generative-art</h2>
+  <p>Re-implementation of a "maze" generator, from the Commodore 64 (1982) era.
+    This short snippet of code was included in the user manual:</p>
+<pre>10 PRINT CHR$(205.5+RND(1))
+20 GOTO 10</pre>
+
+  <p>The Commodore 64 had two fairly poor RNGs accessible via <code>RND()</code>.
+    A beautiful and widely known hack involved sampling a noise signal from the
+    Sound Interface Device (SID)!</p>
+  <div id="art1">╲╱╱╱╲╱╲╲╲╲╲╲╲╱╲╲╲╲╱╲╱╱╱╲╱╱╱╲╱╱╱╲╲╱╱╲╱╲╱╱
+╱╲╲╱╱╲╲╱╱╲╱╲╱╱╱╲╱╱╱╱╲╱╲╲╲╲╲╲╲╲╱╲╱╱╱╲╱╲╲╱
+╲╲╱╱╱╱╱╲╲╱╱╲╲╱╱╱╲╲╱╱╲╲╱╱╱╲╲╲╱╱╱╱╲╱╲╱╲╱╲╱
+╱╱╲╲╱╱╲╲╲╲╱╱╲╱╱╲╲╱╱╱╱╲╲╲╲╲╱╲╱╲╱╱╱╲╱╱╱╱╱╲
+╲╱╱╱╱╱╱╲╱╲╱╲╱╲╱╱╲╱╲╲╲╲╲╲╲╱╱╲╱╲╱╲╲╲╲╲╱╲╲╱
+╲╲╱╲╲╱╱╱╲╱╲╲╱╱╱╲╱╲╱╲╲╲╲╲╱╲╲╲╲╲╲╱╲╱╱╲╲╱╲╲
+╱╲╲╱╱╱╱╲╱╲╱╱╱╱╲╱╱╱╱╱╱╲╲╲╱╲╲╲╱╱╲╲╱╱╱╱╱╱╱╱
+╱╱╲╱╲╲╲╱╱╲╲╱╱╲╲╱╲╱╲╲╱╱╱╲╲╱╲╱╲╱╱╱╲╱╲╱╱╱╲╲
+╱╲╱╲╲╱╱╱╲╱╱╱╲╲╲╲╱╱╲╱╲╱╱╲╲╱╲╱╱╱╲╱╲╲╲╱╲╲╲╲
+╲╲╱╱╲╱╲╲╱╲╲╱╱╱╲╱╱╱╱╱╱╲╲╱╱╱╱╱╱╱╲╱╲╱╱╱╲╲╱╱
+╲╲╲╱╲╱╲╱╱╲╲╱╲╱╱╱╱╱╲╱╲╱╱╱╱╲╱╲╱╲╲╲╱╲╲╲╱╲╲╱
+╲╱╱╱╲╱╱╱╲╱╲╱╱╱╱╱╲╲╲╲╲╱╲╲╱╱╲╱╲╱╲╱╲╱╱╱╱╱╲╲
+╲╱╲╲╱╲╱╲╱╱╲╲╱╲╱╱╱╲╱╱╱╱╲╱╱╱╲╱╲╲╱╱╲╲╲╲╱╱╲╱
+╲╱╲╱╲╲╲╱╲╱╲╲╲╲╱╱╱╱╲╲╱╱╲╲╲╲╲╱╱╱╲╲╲╱╱╲╲╲╲╱
+╲╱╱╱╱╲╲╱╱╲╱╱╲╲╱╱╲╲╲╱╱╱╱╱╱╱╱╱╲╱╱╱╲╱╱╲╱╲╲╲
+╱╱╲╲╲╱╲╱╱╱╱╱╱╱╱╲╱╲╱╱╱╱╱╱╲╲╱╱╱╱╲╲╲╲╱╲╱╱╲╱
+╱╱╱╱╲╲╲╱╱╱╱╲╲╲╱╱╲╲╱╲╲╲╱╲╲╲╲╱╲╱╱╲╲╲╲╱╲╱╲╲
+╲╲╲╱╲╲╱╲╲╲╲╱╱╱╲╲╲╲╲╱╱╱╲╱╱╱╲╲╲╲╲╱╱╱╱╲╲╲╲╱
+╲╱╱╲╱╱╲╲╲╲╲╲╲╲╲╱╱╲╱╲╲╲╲╱╱╲╲╱╲╱╲╱╱╱╲╱╲╱╱╲
+╱╱╲╲╲╲╱╲╱╱╱╱╱╱╲╲╱╲╲╲╲╲╲╱╲╲╲╲╱╲╲╱╲╲╲╲╲╱╲╱
+╲╱╱╲╱╲╱╲╱╲╲╲╱╲╲╲╲╲╲╲╱╲╲╲╲╱╱╱╱╱╱╱╲╱╲╲╲╲╲╲
+╱╲╲╲╱╱╲╲╱╱╲╲╲╱╱╱╲╲╲╲╲╲╲╱╲╲╱╲╱╱╱╱╱╱╲╲╱╲╲╱
+╱╱╱╱╲╱╱╱╱╲╲╱╲╲╱╲╲╲╱╲╱╲╱╲╲╱╱╲╲╲╲╲╱╲╱╲╱╲╱╱
+╱╱╱╱╲╲╲╱╱╲╱╱╱╱╲╱╲╲╲╱╲╲╲╱╱╲╱╱╱╲╲╱╲╲╲╲╱╲╲╱
+</div>
+  <p>To learn more about maze generation, including <a href="https://weblog.jamisbuck.org/2010/12/29/maze-generation-eller-s-algorithm">Eller's brilliant algorithm</a>
+    to generate infinitely-scrolling mazes, check out
+    <a href="https://pragprog.com/titles/jbmaze/mazes-for-programmers/">Mazes for Programmers</a> by Jamis Buck.</p>
+
   <h2 class="count">Closing thoughts</h2>
   <p>
     It seems some PRNGs generate similar streams for similar inputs (i.e. the
@@ -544,7 +725,15 @@ https://en.wikipedia.org/wiki/List_of_random_number_generators
   </p>
   <p align="right"><i>Alok Menghrajani</i></p>
 
-  <!--    <li>Random number types and their applications</li>
+  <!--
+Source of entropy vs RNG.
+
+Java: -Djava.security.egd=file:/dev/./urandom
+https://bugs.openjdk.java.net/browse/JDK-8143166
+
+
+
+    <li>Random number types and their applications</li>
       <li>The ideal random number generator</li>
       <li>Linux: Entropy modeling</li>
       <li>Some randomly generated numbers</li>
@@ -620,8 +809,24 @@ MIT has an entire class (6.856)
 
 https://cryptotronix.com/2014/08/28/tpm-rng/
 
+https://www.schneier.com/academic/fortuna/
+https://arxiv.org/pdf/1908.10020.pdf
 
-    -->
+https://nickm.com/trope_tank/10_PRINT_121114.pdf
+https://retrocomputing.stackexchange.com/questions/2244/how-was-early-randomness-generated
+https://en.wikipedia.org/wiki/RANDU
+https://www.atarimagazines.com/compute/issue72/random_numbers.php
+
+https://security.stackexchange.com/questions/222607/is-reading-from-dev-urandom-on-macos-catalina-a-safe-way-to-produce-cryptograph
+https://www.pagetable.com/c64ref/c64disasm/
+https://github.com/choas/C64-BASIC-iOS-cbmbasic/blob/master/Cbmbasic/CbmBasic/Dependencies/cbmbasic/runtime.c#L769
+https://www.larsgregori.de/2020/05/24/c64-basic-how-i-fixed-rnd/
+
+https://lkml.org/lkml/2016/10/21/982
+https://francozappa.github.io/publication/master-thesis/thesis.pdf
+https://support.apple.com/guide/security/random-number-generation-seca0c73a75b/web
+https://systemd.io/RANDOM_SEEDS/
+  -->
   </div>
 </body>
 </html>
