@@ -124,6 +124,14 @@ h2 {
   width: 1em;
 }
 
+.footnote {
+  display: none;
+}
+
+.footnote2 {
+  font-size: small;
+}
+
 canvas {
   width: 200px;
   height: 200px;
@@ -284,11 +292,29 @@ hr:after {
 }
 
 #art1 {
-  font-family: monospace;
+  font-family: 'c64';
+  font-size: 12px;
   line-height: 1.2;
   white-space: pre;
   color: #7bb4e0;
   background-color: #0067a0;
   width: 40ch;
   padding: 2px 1px;
+}
+
+.rot {
+  animation: rotation 1s 1 ease-in-out;
+}
+
+@-webkit-keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(180deg);
+  }
+}
+
+#dice {
+  cursor: pointer;
 }

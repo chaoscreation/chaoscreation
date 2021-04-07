@@ -2,12 +2,47 @@ $(document).ready(() => {
   font()
   rollDice()
   genTableOfContents()
-  genWhiteNoise()
-  genLCG()
-  updateContributors()
+  genFootnotes()
+  genWhiteNoise(false)
+  genLCG(false)
+  updateContributors(false)
   genSpoiler()
   genArt1()
 })
+
+function genFootnotes() {
+  // find all the footnotes
+  let footnotes = $('.footnote');
+  for (var i=0; i<footnotes.length; i++) {
+    let f = $(footnotes[i]);
+    // replace footnote with a number
+    let text = f.text();
+    let new_link = $('<a href="#footnote-' + (i+1) + '" id="footnote-ref-' + (i+1) + '">');
+    let new_text = $('<sup>');
+    new_text.text("[" + (i+1) + "]");
+    new_link.append(new_text);
+
+    f.empty();
+    f.append(new_link);
+    f.show()
+    // find chapter
+    let c = f;
+    while (c.get(0).nodeName != "H2") {
+      if (c.next().length == 0) {
+        c = c.parent();
+      } else {
+        c = c.next();
+      }
+    }
+    c = c.prev();
+
+    f = $('<div class="footnote2" id="footnote-' + (i+1) + '">');
+    f.text((i+1) + ". " + text + " ");
+    let back = $('<a href="#footnote-ref-' + (i+1) + '">↩</a>');
+    f.append(back);
+    c.after(f);
+  }
+}
 
 function rollDice() {
   const n1 = cryptoRandomValue(1, 6);
@@ -86,7 +121,13 @@ function scaleCanvas(el, ctx, width, height) {
   el.height = ctx.height;
 }
 
-function genWhiteNoise() {
+function genWhiteNoise(clicked) {
+  if (clicked) {
+    $(genWhiteNoiseImg).removeClass('rot');
+    void genWhiteNoiseImg.offsetWidth;
+    $(genWhiteNoiseImg).addClass('rot');
+  }
+
   let ctx = fig1.getContext('2d');
   scaleCanvas(fig1, ctx, 200, 200)
 
@@ -102,7 +143,13 @@ function genWhiteNoise() {
   }
 }
 
-function genLCG() {
+function genLCG(clicked) {
+  if (clicked) {
+    $(genLCGImg).removeClass('rot');
+    void genLCGImg.offsetWidth;
+    $(genLCGImg).addClass('rot');
+  }
+
   let ctx = fig2.getContext('2d');
   scaleCanvas(fig2, ctx, 200, 200)
 
@@ -127,7 +174,12 @@ function genLCG() {
   }
 }
 
-function updateContributors() {
+function updateContributors(clicked) {
+  if (clicked) {
+    $(updateContributorsImg).removeClass('rot');
+    void updateContributorsImg.offsetWidth;
+    $(updateContributorsImg).addClass('rot');
+  }
   shuffledList = shuffle($('#contributors').children());
   $('#contributors').empty();
   $('#contributors').append(shuffledList);
