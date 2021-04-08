@@ -65,6 +65,12 @@ p {
   margin-top: 1em;
   padding: 1em 2em;
   border: 3px solid #e0e0e0;
+  overflow-wrap: break-word;
+}
+
+pre {
+  overflow-wrap: break-word;
+  overflow-x: hidden;
 }
 
 .font0 {
@@ -80,14 +86,15 @@ p {
 }
 
 .fullwidth {
-  margin-left: calc(-50vw + 40ch);
-  margin-right: calc(-50vw + 40ch);
+  margin-left: 0;
+  margin-right: 0;
   padding: 1em;
 }
 
 .title {
   background-color: #222;
   padding-left: 4em;
+  line-height: 64px;
 }
 
 .title img {
@@ -95,6 +102,10 @@ p {
   position: relative;
   top: 0.5em;
 
+}
+
+.subtitle {
+  line-height: normal;
 }
 
 h1 {
@@ -143,13 +154,13 @@ img {
 }
 
 .timeline {
-  padding-left: 1em;
-  padding-right: 1em;
+  padding-left: 0em;
+  padding-right: 0em;
 }
 
 .timeline > div {
   position: relative;
-  padding: 1em 3em;
+  padding: 1em 2em;
   border-top: 2px solid #457b9d;
   overflow-wrap: break-word;
 }
@@ -251,7 +262,7 @@ hr:after {
   margin: 0;
   height: 0;
   padding: 0 0 2em 0;
-  width: 70ch;
+  width: 80vw;
 }
 
 .htimeline hr:after {
@@ -294,7 +305,7 @@ hr:after {
 
 #art1 {
   font-family: 'c64';
-  font-size: 12px;
+  font-size: 1vw;
   line-height: 1.2;
   white-space: pre;
   color: #7bb4e0;

@@ -11,7 +11,7 @@
   <div class="fullwidth title">
     <h1>Everything I know about random number generation <img id="dice" src="dice/1-0.png" onClick="rollDice(); return false;"></h1>
     <!-- rollDice uses a cryptographically secure random number generator! -->
-    <div class="subtitle">A page dedicated to random, pseudo-random, cryptographic, secure, and other number generators.</div>
+    <div class="subtitle">A page dedicated to random number generators.</div>
   </div>
 
   <div class="container">
@@ -56,6 +56,8 @@
       <canvas id="fig1"></canvas>
       <div>Figure 1: white noise. <a href="" onClick="genWhiteNoise(true); return false"><img id="genWhiteNoiseImg" class="refresh" src="refresh.svg"></a></div>
     </div>
+  </div>
+  <div>
     <div>
       <canvas id="fig2"></canvas>
       <div>Figure 2: LCG. <a href="" onClick="genLCG(true); return false"><img id="genLCGImg" class="refresh" src="refresh.svg"></a></div>
@@ -326,12 +328,6 @@ https://www.schneier.com/wp-content/uploads/2017/10/paper-prngs.pdf
 https://en.wikipedia.org/wiki/Middle-square_method
 https://en.wikipedia.org/wiki/Weyl_sequence
 https://en.wikipedia.org/wiki/List_of_random_number_generators
-
-
-
-  <h2 class="count">Overview of random number generator</h2>
-  <p>In order to better understand real world random number generators, it's
-    worth thinking about the ideal scenario.</p>
 
   <h2 class="count">Puzzle 1: biased coin</h2>
   <p><i>The solution to this puzzle is towards the end of this page.</i></p>
