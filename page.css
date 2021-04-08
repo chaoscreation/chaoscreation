@@ -48,7 +48,7 @@
 }
 
 body {
-  width: 80ch;
+  max-width: 80ch;
   margin: 2em auto 10em auto;
   background-color: #eee;
   color: #222;
@@ -151,6 +151,7 @@ img {
   position: relative;
   padding: 1em 3em;
   border-top: 2px solid #457b9d;
+  overflow-wrap: break-word;
 }
 
 .timeline > div > span {

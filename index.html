@@ -65,9 +65,9 @@
   <h2 class="count">Contributors</h2>
   <p>
     This page was authored by <a href="https://quaxio.com/">Alok
-    Menghrajani</a>. The following peers helped by either directly
-    contributing content, proof reading a draft version, and/or providing constructive
-    feedback along the way.
+    Menghrajani</a>. The following peers helped by either directly contributing
+    content, proof reading a draft version, or providing constructive feedback
+    along the way.
   </p>
   <p>
     Interested to work with us at Square? Many teams are
@@ -84,11 +84,11 @@
     feature to ask any question or start a discussion.
   </p>
 
-  <p>In random order (obviously) <a href="" onClick="updateContributors(true); return false"><img id="updateContributorsImg" class="refresh" src="refresh.svg"></a>:</p>
+  <p>In random order (obligatory) <a href="" onClick="updateContributors(true); return false"><img id="updateContributorsImg" class="refresh" src="refresh.svg"></a>:</p>
     <ul id="contributors">
       <li>Oscar</li>
       <li>Alex</li>
-      <li>Michael</li>
+      <li>Michael Weissbacher</li>
     </ul>
 
   <h2 class="count">Overview</h2>
@@ -180,18 +180,19 @@
     Other common techniques include measuring the difference between multiple
     oscillators. A camera pointed at lava lamps<span class="footnote"><a href="https://en.wikipedia.org/wiki/Lavarand">https://en.wikipedia.org/wiki/Lavarand</a>
       and <a href="https://www.atlasobscura.com/places/encryption-lava-lamps">https://www.atlasobscura.com/places/encryption-lava-lamps</a></span>
-    can also serve as a RNG.
+    can also serve as a makeshift RNG.
   </p>
   <p>
     HWRNGs can be categorized based on whether the measurement is a classical
     physical property or a quantum random property, with the later devices being
     significantly more expensive. Classical properties can theoritically be
-    predicted by an observer. Based on our current understanding of physics,
-    quantum properties cannot be predicted by an external observer.
+    predicted by an observer or influenced from the outside. Based on our
+    current understanding of physics, quantum properties can neither be predicted
+    nor influenced by an external actor.
   </p>
   <p>
     Most modern computers have at least two different HWRNGs: the secure enclave/TPM
-    and the processor each provide the ability to generate random numbers. In
+    and the processor. Both devices provide the ability to generate random numbers. In
     addition, it is possible to time jitter<span class="footnote"><a href="https://www.chronox.de/jent/doc/CPU-Jitter-NPTRNG.html">https://www.chronox.de/jent/doc/CPU-Jitter-NPTRNG.html</a></span>.
     Finally, exteral events (such as timing between keystroke, mouse movements,
     or network packet arrival) can be used to construct a RNG.
@@ -207,21 +208,25 @@
   <p>
     Pseudo Random Number Generators (PRNG) are software based, deterministic,
     algorithms. A PRNG is typically seeded with the output of a HWRNG. The
-    combination of HWRNG + PRNG typically enables secure random number
-    generation AND speed.
+    combination of HWRNG + PRNG enables secure random number generation at a
+    high speed. When properly designed, it is unlikely for the RNG to become the
+    bottleneck.
   </p>
   <p>
-    The way RNGs are combined involves entropy pools. It is common to preserve
-    the entropy state between system reboots in a random seed file.
+    One way to combine different RNGs is to build entropy pools. A slow (and possibly)
+    biased HWRNG fills the first pool, which feeds into a second pool used by
+    the PRNG. In such setups, it is common to preserve the entropy state between
+    system reboots by writing the data to a file. It is common for these
+    pools to be drawn in a simplified form<span class="footnote"><a href="https://blog.cloudflare.com/content/images/image01.png">image from "Ensuring Randomness with Linux's Random Number Generator"</a></span>,
+    the reality is often more complex.
+    <span class="footnote">https://www.2uo.de/myths-about-urandom/structure-new-728f5983.png</span>.
   </p>
   <p>
-    Cryptographic protocols can be designed to take entropy from different
-    sources (e.g. the client can supply some entropy, which gets mixed with
-    entropy from the server, to then derive a key). You must be careful how the
-    entropy is mixed -- the safest option being the use of a cryptographic hash
-    function. This is how TLS 1.2 works.
-
-    * https://tls.ulfheim.net/
+    Cryptographic protocols can be designed to take entropy from each party and
+    mixing them. The ideal way to mix entropy is to use a cryptographic hash
+    function. For example, TLS<span class="footnote">https://tls.ulfheim.net/</span>
+    was designed with both, the client and server exchanging random data in their
+    respective Hello messages.
   </p>
 
   <h2 class="count">You can never be sure</h2>
